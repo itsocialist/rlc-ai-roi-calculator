@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RLC-AI ROI Calculator - Enterprise Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #1a1a1a;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #007B5F;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            color: white;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 40px;
+        }
+
+        .input-section {
+            background: #1f1f1f;
+            padding: 30px;
+            border-radius: 8px;
+            overflow: visible;
+        }
+
+        .results-section {
+            background: #1f1f1f;
+            padding: 30px;
+            border-radius: 8px;
+            border: 2px solid #3a3a3a;
+        }
+
+        h2 {
+            color: #007B5F;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #007B5F;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #e0e0e0;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .help-text {
+            font-size: 0.85em;
+            color: #a0a0a0;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #3a3a3a;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+            background: #2a2a2a;
+            color: #e0e0e0;
+        }
+
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #007B5F;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #2a2a2a 0%, #333333 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #3a3a3a;
+        }
+
+        .result-card h3 {
+            color: #e0e0e0;
+            font-size: 1.1em;
+            margin-bottom: 12px;
+        }
+
+        .result-value {
+            font-size: 2em;
+            color: #007B5F;
+            font-weight: 700;
+        }
+
+        .result-description {
+            font-size: 0.9em;
+            color: #a0a0a0;
+            margin-top: 8px;
+        }
+
+        .breakdown {
+            margin-top: 20px;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px solid #3a3a3a;
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            background: #2a2a2a;
+            border-radius: 6px;
+        }
+
+        .breakdown-label {
+            color: #e0e0e0;
+        }
+
+        .breakdown-value {
+            color: #007B5F;
+            font-weight: 600;
+        }
+
+        .highlight-box {
+            background: #007B5F;
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .highlight-box h3 {
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .highlight-value {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .cta-button {
+            background: white;
+            color: #007B5F;
+            padding: 15px 30px;
+            border: 2px solid white;
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            background: #007B5F;
+            color: white;
+        }
+
+        .footer {
+            background: #1f1f1f;
+            padding: 20px;
+            text-align: center;
+            color: #a0a0a0;
+            font-size: 0.9em;
+            border-top: 1px solid #3a3a3a;
+        }
+
+        @media (max-width: 968px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .assumptions {
+            background: #2a2a2a;
+            border-left: 4px solid #007B5F;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+
+        .assumptions h4 {
+            color: #00D9A3;
+            margin-bottom: 10px;
+        }
+
+        .assumptions ul {
+            margin-left: 20px;
+            color: #e0e0e0;
+        }
+
+        .assumptions li {
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .assumptions p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .toggle-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #3a3a3a;
+            position: relative;
+            overflow: visible;
+        }
+
+        .toggle-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #2a2a2a;
+            border-radius: 6px;
+            transition: background 0.3s;
+            color: #e0e0e0;
+        }
+
+        .toggle-header:hover {
+            background: #333333;
+        }
+
+        .toggle-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .toggle-content.active {
+            max-height: 2000px;
+            overflow: visible;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .arrow {
+            transition: transform 0.3s;
+        }
+
+        .arrow.active {
+            transform: rotate(180deg);
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            margin-left: 5px;
+        }
+
+        .tooltip .info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #007B5F;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 300px;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            text-align: left;
+            border-radius: 6px;
+            padding: 12px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9em;
+            line-height: 1.4;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            border: 1px solid #007B5F;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #1a1a1a transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tooltip-highlight {
+            color: #00D9A3;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>RLC-AI ROI Calculator</h1>
+            <p>Quantify infrastructure automation complexity reduction</p>
+        </div>
+
+        <div class="content">
+            <!-- Input Section -->
+            <div class="input-section">
+                <h2>Your Infrastructure Profile</h2>
+
+                <div class="form-group">
+                    <label for="deployments">
+                        Annual AI Infrastructure Deployments
+                        <span class="tooltip">
+                            <span class="info-icon">i</span>
+                            <span class="tooltiptext">
+                                <strong>What to count:</strong> OS refreshes, driver updates, quarterly patches, cluster rebuilds, new capacity deployments. Even automated deployments require validation cycles.
+                                <br><br><span class="tooltip-highlight">Typical range:</span> 100-500 annually for organizations with quarterly update cycles.
+                            </span>
+                        </span>
+                    </label>
+                    <input type="number" id="deployments" value="500" min="1" max="10000">
+                    <div class="help-text">Includes automated provisioning cycles, not just manual deployments</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="gpuCount">
+                        Average GPU Count per Deployment
+                        <span class="tooltip">
+                            <span class="info-icon">i</span>
+                            <span class="tooltiptext">
+                                <strong>Typical configurations:</strong> Development: 1-4 GPUs, Production inference: 8-32 GPUs, Large-scale training: 100+ GPUs.
+                                <br><br><span class="tooltip-highlight">Why it matters:</span> Every minute of deployment time = wasted GPU capacity, especially critical in auto-scaling scenarios.
+                            </span>
+                        </span>
+                    </label>
+                    <input type="number" id="gpuCount" value="8" min="1" max="100">
+                    <div class="help-text">GPUs per deployment instance</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="gpuType">
+                        Primary GPU Type
+                        <span class="tooltip">
+                            <span class="info-icon">i</span>
+                            <span class="tooltiptext">
+                                <strong>Hardware comparison:</strong> H100: Latest flagship (80GB), A100: Production workhorse (80GB), A30: Cost-effective inference (24GB), L40: Visual computing + AI (48GB).
+                                <br><br><span class="tooltip-highlight">Based on:</span> AWS on-demand rates. Your costs may vary by provider and commitment level.
+                            </span>
+                        </span>
+                    </label>
+                    <select id="gpuType">
+                        <option value="2.95">H100 80GB ($2.95/hr)</option>
+                        <option value="2.21" selected>A100 80GB ($2.21/hr)</option>
+                        <option value="0.76">A30 24GB ($0.76/hr)</option>
+                        <option value="1.89">L40 48GB ($1.89/hr)</option>
+                        <option value="2.00">Custom GPU ($2.00/hr)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="engineerRate">
+                        ML/Infrastructure Engineer Hourly Rate
+                        <span class="tooltip">
+                            <span class="info-icon">i</span>
+                            <span class="tooltiptext">
+                                <strong>Calculation:</strong> Annual fully-loaded cost (salary + benefits + overhead) ÷ 2,080 hours.
+                                <br><br><span class="tooltip-highlight">Benchmarks:</span> Mid-level: $100-150/hr, Senior: $150-250/hr, Staff+: $250-400/hr.
+                            </span>
+                        </span>
+                    </label>
+                    <input type="number" id="engineerRate" value="150" min="50" max="500">
+                    <div class="help-text">Fully-loaded cost including benefits and overhead</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="nodes">
+                        Number of RLC-AI Nodes
+                        <span class="tooltip">
+                            <span class="info-icon">i</span>
+                            <span class="tooltiptext">
+                                <strong>What counts:</strong> Each physical server or VM instance, regardless of GPU count. One 8-GPU server = 1 node.
+                                <br><br><span class="tooltip-highlight">Volume pricing:</span> 1-100: $300/node, 101-500: $250/node, 501-1000: $200/node, 1001+: $175/node.
+                            </span>
+                        </span>
+                    </label>
+                    <input type="number" id="nodes" value="500" min="1" max="10000">
+                    <div class="help-text">For subscription pricing calculation</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="deploymentOption">
+                        Current Deployment Approach
+                        <span class="tooltip">
+                            <span class="info-icon">i</span>
+                            <span class="tooltiptext">
+                                <strong>Baseline comparison:</strong> <em>Automated Rocky:</em> Uses Terraform + Ansible to automate driver/CUDA/PyTorch installation. <em>RLC + CUDA:</em> Pre-integrated drivers and CUDA, you install PyTorch. <em>RLC-AI:</em> Complete pre-validated stack.
+                                <br><br><span class="tooltip-highlight">Key insight:</span> Even automation requires maintenance. RLC-AI eliminates the automation maintenance burden.
+                            </span>
+                        </span>
+                    </label>
+                    <select id="deploymentOption">
+                        <option value="automated" selected>Automated Rocky/Ubuntu (Terraform + Ansible)</option>
+                        <option value="rlc-cuda">RLC + CUDA (Drivers Pre-installed)</option>
+                        <option value="rlc-ai">RLC-AI (Full Stack Pre-integrated)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="environment">
+                        Deployment Environment
+                        <span class="tooltip">
+                            <span class="info-icon">i</span>
+                            <span class="tooltiptext">
+                                <strong>Environment types:</strong> <em>Cloud:</em> AWS, Azure, GCP, Oracle - adds multi-cloud consistency and auto-scaling value. <em>On-Premises:</em> Own data centers - focuses on automation maintenance elimination. <em>Hybrid:</em> Both.
+                                <br><br><span class="tooltip-highlight">Impact:</span> Cloud deployments see additional value from image maintenance elimination and faster instance warmup.
+                            </span>
+                        </span>
+                    </label>
+                    <select id="environment">
+                        <option value="cloud" selected>Cloud</option>
+                        <option value="onprem">On-Premises</option>
+                        <option value="hybrid">Hybrid</option>
+                    </select>
+                </div>
+
+                <!-- Advanced Options Toggle -->
+                <div class="toggle-section">
+                    <div class="toggle-header" onclick="toggleAdvanced()">
+                        <h3 style="color: #007B5F; margin: 0;">Advanced Options</h3>
+                        <span class="arrow" id="advancedArrow">▼</span>
+                    </div>
+                    <div class="toggle-content" id="advancedContent">
+                        <div style="padding: 20px 0;">
+                            <div class="form-group">
+                                <label for="clouds">
+                                    Number of Clouds
+                                    <span class="tooltip">
+                                        <span class="info-icon">i</span>
+                                        <span class="tooltiptext">
+                                            <strong>Multi-cloud image maintenance:</strong> Each cloud requires separate image maintenance. RLC-AI provides identical images across all clouds.
+                                            <br><br><span class="tooltip-highlight">Savings:</span> $16K per cloud annually in maintenance overhead elimination.
+                                        </span>
+                                    </span>
+                                </label>
+                                <select id="clouds">
+                                    <option value="1" selected>Single Cloud</option>
+                                    <option value="2">Two Clouds</option>
+                                    <option value="3">Three or More Clouds</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="autoScaling">
+                                    Auto-Scaling Frequency
+                                    <span class="tooltip">
+                                        <span class="info-icon">i</span>
+                                        <span class="tooltiptext">
+                                            <strong>Cloud auto-scaling impact:</strong> Each scale event requires instance warmup. RLC-AI's 3-4 minute warmup vs 5-8 minute automated setup = significant savings at scale.
+                                            <br><br><span class="tooltip-highlight">When applicable:</strong> Dynamic GPU scaling for inference APIs, batch processing, or variable workloads.
+                                        </span>
+                                    </span>
+                                </label>
+                                <select id="autoScaling">
+                                    <option value="0">Never (Static Capacity)</option>
+                                    <option value="52">Weekly</option>
+                                    <option value="365" selected>Daily</option>
+                                    <option value="1095">Multiple Times Daily</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="newHardwareValue">
+                                    Value of Early Hardware Access (Annual)
+                                    <span class="tooltip">
+                                        <span class="info-icon">i</span>
+                                        <span class="tooltiptext">
+                                            <strong>Hardware timing advantage:</strong> RLC-AI provides Day-1 support for new GPU architectures. Traditional automation requires 3-6 months to validate and integrate new hardware.
+                                            <br><br><span class="tooltip-highlight">Example:</strong> Early Blackwell access delivering 20% more capacity for 6 months = significant competitive advantage. Set to $0 if not applicable.
+                                        </span>
+                                    </span>
+                                </label>
+                                <input type="number" id="newHardwareValue" value="0" min="0" max="1000000">
+                                <div class="help-text">Strategic value of faster new GPU architecture adoption</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section">
+                <h2>Your ROI Analysis</h2>
+
+                <div class="result-card">
+                    <h3>
+                        Total Annual Cost Savings
+                        <span class="tooltip">
+                            <span class="info-icon">i</span>
+                            <span class="tooltiptext">
+                                <strong>Measurable savings:</strong> Automation maintenance elimination, integration validation overhead reduction, infrastructure-as-code simplification, deployment efficiency, and multi-cloud consistency.
+                                <br><br><span class="tooltip-highlight">What this includes:</span> Defensible hard costs you can take to your CFO, excluding strategic/timing benefits calculated separately.
+                            </span>
+                        </span>
+                    </h3>
+                    <div class="result-value" id="totalSavings">$0</div>
+                    <div class="result-description">Quantifiable infrastructure and engineering cost reductions</div>
+                </div>
+
+                <div class="breakdown">
+                    <h3 style="color: #e0e0e0; margin-bottom: 15px;">Savings Breakdown</h3>
+                    
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">
+                            Automation Maintenance Elimination
+                            <span class="tooltip">
+                                <span class="info-icon" style="background: #495057; color: white;">i</span>
+                                <span class="tooltiptext">
+                                    <strong>The hidden automation tax:</strong> Quarterly updates (32 hrs) + annual refactoring (40 hrs) + failure remediation (40 hrs) + testing (40 hrs) = 152 hours annually maintaining infrastructure-as-code.
+                                    <br><br><span class="tooltip-highlight">RLC-AI value:</span> CIQ maintains driver-CUDA-PyTorch integration, you consume validated images.
+                                </span>
+                            </span>
+                        </span>
+                        <span class="breakdown-value" id="automationSavings">$0</span>
+                    </div>
+
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">
+                            Integration Validation Overhead
+                            <span class="tooltip">
+                                <span class="info-icon" style="background: #495057; color: white;">i</span>
+                                <span class="tooltiptext">
+                                    <strong>Compatibility testing burden:</strong> Even automated deployments require testing that Driver 580 + CUDA 12.8 + PyTorch 2.8 work together. Conservative estimate: 10% of deployments encounter issues requiring 3 hours debugging.
+                                    <br><br><span class="tooltip-highlight">RLC-AI eliminates:</span> 90% of compatibility testing overhead through pre-validated integration.
+                                </span>
+                            </span>
+                        </span>
+                        <span class="breakdown-value" id="validationSavings">$0</span>
+                    </div>
+
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">
+                            Infrastructure-as-Code Simplification
+                            <span class="tooltip">
+                                <span class="info-icon" style="background: #495057; color: white;">i</span>
+                                <span class="tooltiptext">
+                                    <strong>Complexity reduction:</strong> Traditional: 480 lines of Ansible managing repos, drivers, CUDA, cuDNN, PyTorch compilation. RLC-AI: 25 lines deploying validated image.
+                                    <br><br><span class="tooltip-highlight">Value:</strong> Reduced maintenance burden, faster team onboarding, lower automation failure risk. Conservative valuation: 40 hours annually.
+                                </span>
+                            </span>
+                        </span>
+                        <span class="breakdown-value" id="iacSavings">$0</span>
+                    </div>
+
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">
+                            Deployment Time Efficiency
+                            <span class="tooltip">
+                                <span class="info-icon" style="background: #495057; color: white;">i</span>
+                                <span class="tooltiptext">
+                                    <strong>Warmup time comparison:</strong> Automated Rocky + GPU setup: 5-8 minutes. RLC-AI: 3-4 minutes. Critical in auto-scaling scenarios where every minute of instance warmup = wasted GPU spend.
+                                    <br><br><span class="tooltip-highlight">Calculation:</span> Time difference × GPU hourly cost × GPU count × deployment frequency.
+                                </span>
+                            </span>
+                        </span>
+                        <span class="breakdown-value" id="deploymentSavings">$0</span>
+                    </div>
+
+                    <div class="breakdown-item" id="cloudSavingsRow" style="display: none;">
+                        <span class="breakdown-label">
+                            Multi-Cloud Image Maintenance
+                            <span class="tooltip">
+                                <span class="info-icon" style="background: #495057; color: white;">i</span>
+                                <span class="tooltiptext">
+                                    <strong>Per-cloud overhead:</strong> $16,200 annually per cloud (driver updates, CUDA integration, framework validation, cross-cloud parity testing). RLC-AI provides synchronized images across AWS, Azure, GCP, Oracle.
+                                    <br><br><span class="tooltip-highlight">Additional value:</strong> Eliminates cross-cloud debugging incidents ("works in AWS but not Azure").
+                                </span>
+                            </span>
+                        </span>
+                        <span class="breakdown-value" id="cloudSavings">$0</span>
+                    </div>
+
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">
+                            Configuration Drift Prevention
+                            <span class="tooltip">
+                                <span class="info-icon" style="background: #495057; color: white;">i</span>
+                                <span class="tooltiptext">
+                                    <strong>Automated deployment failures:</strong> Conservative estimate: 5-7% of automated deployments encounter compatibility issues when driver/CUDA/framework versions drift from validated combinations. RLC-AI: <2%.
+                                    <br><br><span class="tooltip-highlight">Calculation:</strong> Error rate reduction × GPU downtime hours × GPU cost × deployments.
+                                </span>
+                            </span>
+                        </span>
+                        <span class="breakdown-value" id="driftSavings">$0</span>
+                    </div>
+
+                    <div class="breakdown-item" id="hardwareRow" style="display: none;">
+                        <span class="breakdown-label">
+                            Day-1 New Hardware Support
+                            <span class="tooltip">
+                                <span class="info-icon" style="background: #495057; color: white;">i</span>
+                                <span class="tooltiptext">
+                                    <strong>Hardware timing advantage:</strong> Traditional automation requires 3-6 months to validate new GPU architectures. RLC-AI provides Day-1 support.
+                                    <br><br><span class="tooltip-highlight">Strategic value:</strong> Earlier access to 20%+ performance improvements can deliver significant competitive advantage.
+                                </span>
+                            </span>
+                        </span>
+                        <span class="breakdown-value" id="hardwareSavings">$0</span>
+                    </div>
+                </div>
+
+                <div class="result-card" style="margin-top: 25px;">
+                    <h3>RLC-AI Annual Investment</h3>
+                    <div class="result-value" style="color: #dc3545;" id="investment">$0</div>
+                    <div class="result-description" id="pricingTier">Volume pricing applied</div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>
+                        Your ROI
+                        <span class="tooltip">
+                            <span class="info-icon" style="background: white; color: #007B5F;">i</span>
+                            <span class="tooltiptext">
+                                <strong>ROI Calculation:</strong> (Annual Savings - Annual Investment) ÷ Annual Investment × 100%
+                                <br><br><span class="tooltip-highlight">Interpretation:</span> For every $1 invested in RLC-AI, you save this percentage in infrastructure and engineering costs. Payback period shows months to break even.
+                            </span>
+                        </span>
+                    </h3>
+                    <div class="highlight-value" id="roi">0%</div>
+                    <p style="margin: 10px 0;">Payback Period: <span id="payback" style="font-weight: 700;">0</span> months</p>
+                    <p style="font-size: 0.9em; opacity: 0.9;">Net Annual Benefit: $<span id="netBenefit">0</span></p>
+                </div>
+
+                <div class="assumptions">
+                    <h4>Key Assumptions (Measured Against Automated Deployment Baselines)</h4>
+                    <ul>
+                        <li><strong>Baseline comparison:</strong> Automated Rocky Linux deployment with modern DevOps tooling (Terraform + Ansible), not manual installation</li>
+                        <li><strong>Automation maintenance:</strong> 152 hours annually (32 hrs quarterly updates + 40 hrs refactoring + 40 hrs remediation + 40 hrs testing)</li>
+                        <li><strong>Deployment time baseline:</strong> 5-8 minutes for automated Rocky + GPU stack vs 3-4 minutes for RLC-AI (matters most in auto-scaling)</li>
+                        <li><strong>Compatibility issues:</strong> 7% of automated deployments encounter driver-CUDA-framework issues requiring 3 hours debugging</li>
+                        <li><strong>RLC-AI error rate:</strong> <2% (pre-validated integration)</li>
+                        <li><strong>Image maintenance per cloud:</strong> $16,200 annually (quarterly updates, testing, cross-cloud validation)</li>
+                        <li><strong>Multi-cloud consistency incidents:</strong> ~1 per month averaging $1,294 remediation cost</li>
+                        <li><strong>IaC simplification value:</strong> Conservative 40 hours annually (reduced from 480 to 25 lines of automation code)</li>
+                    </ul>
+                </div>
+
+                <div class="assumptions" style="margin-top: 15px;">
+                    <h4>Understanding Our Value Proposition</h4>
+                    <p style="color: #e0e0e0; margin-bottom: 10px;">
+                        <strong>What RLC-AI solves:</strong> Integration complexity, not orchestration complexity. If you've automated deployment, RLC-AI doesn't replace your automation—it simplifies it by providing pre-integrated, pre-validated driver + CUDA + PyTorch stacks.
+                    </p>
+                    <p style="color: #e0e0e0; margin-bottom: 10px;">
+                        <strong>Your automation still matters:</strong> You'll still use Terraform, Ansible, or Kubernetes. But instead of 480 lines managing driver installation and compilation, you'll have 25 lines deploying validated images. Your team focuses on AI workloads, not infrastructure maintenance.
+                    </p>
+                    <p style="color: #e0e0e0;">
+                        <strong>Verification during evaluation:</strong> We provide benchmark methodology documentation and customer reference calls. We're transparent about Tech Preview status and welcome scrutiny of our testing approach. Third-party validation available under NDA.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p style="color: #e0e0e0;"><strong>Ready to eliminate your AI infrastructure complexity tax?</strong></p>
+            <p style="color: #a0a0a0;">Contact CIQ Sales for a customized assessment and Tech Preview access</p>
+            
+            <p style="margin-top: 25px; font-size: 0.85em; color: #808080;">
+                This calculator provides estimates based on industry benchmarks and validated performance data. 
+                Actual results vary based on your specific environment, automation maturity, and use cases.
+            </p>
+            <p style="margin-top: 10px; font-size: 0.85em; color: #808080;">
+                © 2025 CIQ. All performance claims based on measured benchmarks. Methodology documentation available upon request.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Calculate and update all values
+        function calculate() {
+            // Get input values
+            const deployments = parseInt(document.getElementById('deployments').value) || 0;
+            const gpuCount = parseInt(document.getElementById('gpuCount').value) || 0;
+            const gpuHourlyCost = parseFloat(document.getElementById('gpuType').value) || 0;
+            const engineerRate = parseInt(document.getElementById('engineerRate').value) || 0;
+            const nodes = parseInt(document.getElementById('nodes').value) || 0;
+            const environment = document.getElementById('environment').value;
+            const deploymentOption = document.getElementById('deploymentOption').value;
+            const autoScaling = parseInt(document.getElementById('autoScaling').value) || 0;
+            const clouds = parseInt(document.getElementById('clouds').value) || 1;
+            const newHardwareValue = parseInt(document.getElementById('newHardwareValue').value) || 0;
+
+            // Constants based on actual automation benchmarks
+            const AUTOMATION_MAINTENANCE_HOURS = 152; // Annual maintenance burden
+            const COMPATIBILITY_TESTING_HOURS = 3; // Per failed deployment
+            const IaC_SIMPLIFICATION_HOURS = 40; // Annual value of reduced complexity
+            const AUTOMATED_DEPLOYMENT_MINUTES = 6.5; // Realistic automated baseline
+            const RLC_AI_DEPLOYMENT_MINUTES = 3.7; // RLC-AI actual
+            const RLC_CUDA_DEPLOYMENT_MINUTES = 4.6; // RLC+CUDA estimated
+            const AUTOMATED_ERROR_RATE = 0.07; // 7% for automated deployments
+            const RLC_AI_ERROR_RATE = 0.02; // 2% for RLC-AI
+            const RLC_CUDA_ERROR_RATE = 0.05; // 5% for RLC+CUDA
+            const DOWNTIME_HOURS = 6; // GPU downtime per error
+            const IMAGE_MAINTENANCE_PER_CLOUD = 16200; // Annual per cloud
+            const MULTI_CLOUD_INCIDENT_COST = 1294.40; // Per incident
+            const MULTI_CLOUD_INCIDENTS_MONTHLY = 1; // Conservative estimate
+
+            // Calculate time saved based on deployment option
+            let timeSavedMinutes;
+            let errorRateReduction;
+            let automationMaintenanceSavings;
+            
+            if (deploymentOption === 'rlc-ai') {
+                // Full RLC-AI
+                timeSavedMinutes = AUTOMATED_DEPLOYMENT_MINUTES - RLC_AI_DEPLOYMENT_MINUTES;
+                errorRateReduction = AUTOMATED_ERROR_RATE - RLC_AI_ERROR_RATE;
+                automationMaintenanceSavings = AUTOMATION_MAINTENANCE_HOURS * engineerRate;
+            } else if (deploymentOption === 'rlc-cuda') {
+                // RLC with CUDA but customer installs PyTorch
+                timeSavedMinutes = AUTOMATED_DEPLOYMENT_MINUTES - RLC_CUDA_DEPLOYMENT_MINUTES;
+                errorRateReduction = AUTOMATED_ERROR_RATE - RLC_CUDA_ERROR_RATE;
+                automationMaintenanceSavings = AUTOMATION_MAINTENANCE_HOURS * 0.7 * engineerRate; // 70% reduction
+            } else {
+                // Automated baseline comparison
+                timeSavedMinutes = 0;
+                errorRateReduction = 0;
+                automationMaintenanceSavings = 0;
+            }
+
+            // Calculate savings components
+            
+            // 1. Automation Maintenance Elimination
+            const automationSavings = automationMaintenanceSavings;
+            
+            // 2. Integration Validation Overhead (compatibility testing)
+            const validationSavings = errorRateReduction * deployments * COMPATIBILITY_TESTING_HOURS * engineerRate;
+            
+            // 3. Infrastructure-as-Code Simplification
+            const iacSavings = deploymentOption !== 'automated' ? IaC_SIMPLIFICATION_HOURS * engineerRate : 0;
+            
+            // 4. Deployment Time Efficiency (GPU idle time during warmup)
+            const deploymentSavings = timeSavedMinutes * (gpuHourlyCost / 60) * gpuCount * deployments;
+            
+            // 5. Multi-Cloud Image Maintenance (only if cloud and not baseline)
+            let cloudSpecificSavings = 0;
+            if (environment === 'cloud' && deploymentOption !== 'automated') {
+                // Image maintenance overhead
+                const imageMaintenanceSavings = IMAGE_MAINTENANCE_PER_CLOUD * clouds;
+                
+                // Multi-cloud consistency (incident reduction)
+                const multiCloudSavings = clouds > 1 ? (MULTI_CLOUD_INCIDENT_COST * MULTI_CLOUD_INCIDENTS_MONTHLY * 12) : 0;
+                
+                cloudSpecificSavings = imageMaintenanceSavings + multiCloudSavings;
+                
+                document.getElementById('cloudSavingsRow').style.display = 'flex';
+            } else {
+                document.getElementById('cloudSavingsRow').style.display = 'none';
+            }
+            
+            // 6. Configuration Drift Prevention (production downtime avoidance)
+            const driftSavings = errorRateReduction * deployments * DOWNTIME_HOURS * gpuHourlyCost * gpuCount;
+            
+            // 7. Day-1 Hardware Support (strategic value)
+            const hardwareSavings = newHardwareValue;
+            if (newHardwareValue > 0) {
+                document.getElementById('hardwareRow').style.display = 'flex';
+            } else {
+                document.getElementById('hardwareRow').style.display = 'none';
+            }
+            
+            // Total savings
+            const totalSavings = automationSavings + validationSavings + iacSavings + 
+                               deploymentSavings + cloudSpecificSavings + driftSavings + hardwareSavings;
+            
+            // Calculate investment (only if not comparing to automated baseline)
+            let investment = 0;
+            let pricePerNode = 0;
+            let pricingTier = "";
+            
+            if (deploymentOption !== 'automated') {
+                if (nodes <= 100) {
+                    pricePerNode = deploymentOption === 'rlc-ai' ? 300 : 250;
+                    pricingTier = deploymentOption === 'rlc-ai' ? 
+                        "Standard pricing: $300/node/year" : 
+                        "RLC+CUDA pricing: $250/node/year";
+                } else if (nodes <= 500) {
+                    pricePerNode = deploymentOption === 'rlc-ai' ? 250 : 200;
+                    pricingTier = deploymentOption === 'rlc-ai' ?
+                        "Volume pricing: $250/node/year (101-500 nodes)" :
+                        "RLC+CUDA volume: $200/node/year (101-500 nodes)";
+                } else if (nodes <= 1000) {
+                    pricePerNode = deploymentOption === 'rlc-ai' ? 200 : 175;
+                    pricingTier = deploymentOption === 'rlc-ai' ?
+                        "Volume pricing: $200/node/year (501-1000 nodes)" :
+                        "RLC+CUDA volume: $175/node/year (501-1000 nodes)";
+                } else {
+                    pricePerNode = deploymentOption === 'rlc-ai' ? 175 : 150;
+                    pricingTier = deploymentOption === 'rlc-ai' ?
+                        "Enterprise pricing: $175/node/year (1001+ nodes)" :
+                        "RLC+CUDA enterprise: $150/node/year (1001+ nodes)";
+                }
+                
+                investment = nodes * pricePerNode;
+            }
+            
+            // Calculate ROI
+            const netBenefit = totalSavings - investment;
+            const roi = investment > 0 ? ((netBenefit / investment) * 100).toFixed(0) : 
+                       (deploymentOption === 'automated' ? 'N/A' : '0');
+            const paybackMonths = investment > 0 && totalSavings > 0 ? 
+                                 ((investment / totalSavings) * 12).toFixed(1) : 
+                                 (deploymentOption === 'automated' ? 'N/A' : '0');
+            
+            // Update display
+            document.getElementById('totalSavings').textContent = '$' + totalSavings.toLocaleString(undefined, {maximumFractionDigits: 0});
+            document.getElementById('automationSavings').textContent = '$' + automationSavings.toLocaleString(undefined, {maximumFractionDigits: 0});
+            document.getElementById('validationSavings').textContent = '$' + validationSavings.toLocaleString(undefined, {maximumFractionDigits: 0});
+            document.getElementById('iacSavings').textContent = '$' + iacSavings.toLocaleString(undefined, {maximumFractionDigits: 0});
+            document.getElementById('deploymentSavings').textContent = '$' + deploymentSavings.toLocaleString(undefined, {maximumFractionDigits: 0});
+            document.getElementById('cloudSavings').textContent = '$' + cloudSpecificSavings.toLocaleString(undefined, {maximumFractionDigits: 0});
+            document.getElementById('driftSavings').textContent = '$' + driftSavings.toLocaleString(undefined, {maximumFractionDigits: 0});
+            document.getElementById('hardwareSavings').textContent = '$' + hardwareSavings.toLocaleString(undefined, {maximumFractionDigits: 0});
+            
+            document.getElementById('investment').textContent = deploymentOption === 'automated' ? 
+                'N/A (Baseline)' : '$' + investment.toLocaleString(undefined, {maximumFractionDigits: 0});
+            document.getElementById('pricingTier').textContent = deploymentOption === 'automated' ? 
+                'Automated deployment baseline for comparison' : pricingTier;
+            
+            document.getElementById('roi').textContent = roi === 'N/A' ? roi : roi + '%';
+            document.getElementById('payback').textContent = paybackMonths;
+            document.getElementById('netBenefit').textContent = deploymentOption === 'automated' ?
+                totalSavings.toLocaleString(undefined, {maximumFractionDigits: 0}) + ' (potential savings)' :
+                netBenefit.toLocaleString(undefined, {maximumFractionDigits: 0});
+        }
+
+        // Toggle advanced options
+        function toggleAdvanced() {
+            const content = document.getElementById('advancedContent');
+            const arrow = document.getElementById('advancedArrow');
+            
+            content.classList.toggle('active');
+            arrow.classList.toggle('active');
+        }
+
+        // Add event listeners to all inputs
+        document.querySelectorAll('input, select').forEach(element => {
+            element.addEventListener('input', calculate);
+            element.addEventListener('change', calculate);
+        });
+
+        // Initial calculation
+        calculate();
+    </script>
+</body>
+</html>
