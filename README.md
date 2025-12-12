@@ -2,7 +2,7 @@
 
 **Interactive web calculator for enterprise organizations evaluating RLC-AI adoption.**
 
-[![Live Demo](https://img.shields.io/badge/demo-live-green)](https://[YOUR-ORG].github.io/rlc-ai-roi-calculator/)
+[![Live Demo](https://img.shields.io/badge/demo-live-green)](https://ctrliq.github.io/rlc-ai-roi-calculator/)
 
 ---
 
@@ -75,7 +75,7 @@ This calculator compares against **automated deployment baselines** (5-8 minute 
 ### View Locally
 
 ```bash
-git clone https://github.com/[YOUR-ORG]/rlc-ai-roi-calculator.git
+git clone https://github.com/ctrliq/rlc-ai-roi-calculator.git
 cd rlc-ai-roi-calculator
 open index.html  # macOS
 # or just open index.html in any browser
@@ -89,13 +89,13 @@ open index.html  # macOS
 4. Folder: / (root)
 5. Save
 
-Your calculator will be live at: `https://[YOUR-ORG].github.io/rlc-ai-roi-calculator/`
+Your calculator will be live at: `https://ctrliq.github.io/rlc-ai-roi-calculator/`
 
 ### Embed in Website
 
 ```html
 <iframe 
-  src="https://calculator.ciq.com" 
+  src="https://ctrliq.github.io/rlc-ai-roi-calculator/" 
   width="100%" 
   height="1200px" 
   frameborder="0">
@@ -245,7 +245,7 @@ const AUTOMATED_ERROR_RATE = 0.07;        // 7% - adjust this
 
 ### Reporting Issues
 
-Found a calculation error or display bug? [Create an issue](https://github.com/[YOUR-ORG]/rlc-ai-roi-calculator/issues)
+Found a calculation error or display bug? [Create an issue](https://github.com/ctrliq/rlc-ai-roi-calculator/issues)
 
 **Include:**
 - Browser and OS version
@@ -294,7 +294,7 @@ sales@ciq.com
 support@ciq.com
 
 **For Calculator Issues:**  
-[Create a GitHub issue](https://github.com/[YOUR-ORG]/rlc-ai-roi-calculator/issues)
+[Create a GitHub issue](https://github.com/ctrliq/rlc-ai-roi-calculator/issues)
 
 **For Benchmark Methodology:**  
 Request documentation through your CIQ Sales representative
